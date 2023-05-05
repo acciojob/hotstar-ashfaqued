@@ -25,8 +25,38 @@ public class SubscriptionService {
     public Integer buySubscription(SubscriptionEntryDto subscriptionEntryDto){
 
         //Save The subscription Object into the Db and return the total Amount that user has to pay
+          Subscription subscription= new Subscription();
+          User user = userRepository.findById(subscriptionEntryDto.getUserId()).get();
 
-        return null;
+        // get name of subscribtion in string and calculate cost
+        String sub= subscriptionEntryDto.getSubscriptionType().toString();
+        int totalAmount =0;
+
+        if(sub.equalsIgnoreCase("elite") || sub.equalsIgnoreCase("pro")||sub.equalsIgnoreCase("basic")) {
+            if (sub.equalsIgnoreCase("elite")) {
+                subscription.setSubscriptionType(SubscriptionType.ELITE);
+                totalAmount = 1000 + (350 * subscriptionEntryDto.getNoOfScreensRequired());
+                subscription.setTotalAmountPaid(totalAmount);
+            } else if (sub.equalsIgnoreCase("pro")) {
+                subscription.setSubscriptionType(SubscriptionType.PRO);
+                totalAmount = 800 + (250 * subscriptionEntryDto.getNoOfScreensRequired());
+                subscription.setTotalAmountPaid(totalAmount);
+            } else if (sub.equalsIgnoreCase("basic")) {
+                subscription.setSubscriptionType(SubscriptionType.BASIC);
+                totalAmount = 500 + (200 * subscriptionEntryDto.getNoOfScreensRequired());
+                subscription.setTotalAmountPaid(totalAmount);
+            }
+
+        }
+        // set all subcriber parameter
+        subscription.setStartSubscriptionDate(new Date());
+        subscription.setNoOfScreensSubscribed(subscriptionEntryDto.getNoOfScreensRequired());
+        subscription.setUser(user);
+
+        // save
+        user.setSubscription(subscription);
+        userRepository.save(user);
+        return totalAmount;
     }
 
     public Integer upgradeSubscription(Integer userId)throws Exception{
@@ -43,7 +73,12 @@ public class SubscriptionService {
         //We need to find out total Revenue of hotstar : from all the subscriptions combined
         //Hint is to use findAll function from the SubscriptionDb
 
-        return null;
+        List<Subscription> subscriptionList= subscriptionRepository.findAll();
+         int totalRevenue=0;
+         for(Subscription subscriptionX:subscriptionList){
+             totalRevenue += subscriptionX.getTotalAmountPaid();
+         }
+        return totalRevenue;
     }
 
 }
