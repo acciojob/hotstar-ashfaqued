@@ -75,16 +75,18 @@ public class SubscriptionService {
         }
      //  int amount=0;
         if (userSubscription.getSubscriptionType().toString().equals("BASIC")) {
-            userSubscription.setSubscriptionType(SubscriptionType.ELITE);
-            newAmount = 1000 + (350 * user.getSubscription().getNoOfScreensSubscribed());
+
+            newAmount = 800 + (250 * user.getSubscription().getNoOfScreensSubscribed());
             userSubscription.setStartSubscriptionDate(new Date());
+            userSubscription.setSubscriptionType(SubscriptionType.PRO);
             //    userSubscription.setSubscriptionType();
             //subscription.setTotalAmountPaid(totalAmount);
         }
         else  {
-            userSubscription.setSubscriptionType(SubscriptionType.PRO);
-            newAmount = 800 + (250 * user.getSubscription().getNoOfScreensSubscribed());
+
+            newAmount = 1000 + (350 * user.getSubscription().getNoOfScreensSubscribed());
                 userSubscription.setStartSubscriptionDate(new Date());
+            userSubscription.setSubscriptionType(SubscriptionType.ELITE);
         }
         subscriptionRepository.save(userSubscription);
         return newAmount-paidAmount;
